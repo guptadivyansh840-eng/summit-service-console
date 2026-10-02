@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Technician_Required_When_Active</fullName>
+    <active>true</active>
+    <description>Rule 3: Technician required for Scheduled / In Progress.</description>
+    <errorConditionFormula>AND(OR(ISPICKVAL(Status__c, "Scheduled"), ISPICKVAL(Status__c, "In Progress")), ISBLANK(Technician__c))</errorConditionFormula>
+    <errorDisplayField>Technician__c</errorDisplayField>
+    <errorMessage>A Technician is required when Status is Scheduled or In Progress.</errorMessage>
+</ValidationRule>

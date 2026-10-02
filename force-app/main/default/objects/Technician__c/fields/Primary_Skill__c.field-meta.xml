@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Primary_Skill__c</fullName>
+    <externalId>false</externalId>
+    <label>Primary Skill</label>
+    <required>false</required>
+    <valueSet>
+        <restricted>true</restricted>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value><fullName>HVAC</fullName><default>false</default><label>HVAC</label></value>
+            <value><fullName>Electrical</fullName><default>false</default><label>Electrical</label></value>
+            <value><fullName>Plumbing</fullName><default>false</default><label>Plumbing</label></value>
+            <value><fullName>Carpentry</fullName><default>false</default><label>Carpentry</label></value>
+            <value><fullName>General</fullName><default>false</default><label>General</label></value>
+        </valueSetDefinition>
+    </valueSet>
+    <trackTrending>false</trackTrending>
+    <type>Picklist</type>
+</CustomField>

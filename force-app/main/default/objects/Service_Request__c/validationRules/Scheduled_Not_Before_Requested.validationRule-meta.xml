@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Scheduled_Not_Before_Requested</fullName>
+    <active>true</active>
+    <description>Rule 2: Scheduled Date &gt;= Requested Date.</description>
+    <errorConditionFormula>AND(NOT(ISBLANK(Scheduled_Date__c)), Scheduled_Date__c &lt; Requested_Date__c)</errorConditionFormula>
+    <errorDisplayField>Scheduled_Date__c</errorDisplayField>
+    <errorMessage>Scheduled Date cannot be earlier than Requested Date.</errorMessage>
+</ValidationRule>

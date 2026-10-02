@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Technician__c</fullName>
+    <externalId>false</externalId>
+    <label>Technician</label>
+    <deleteConstraint>SetNull</deleteConstraint>
+    <lookupFilter>
+        <active>true</active>
+        <errorMessage>Only active technicians can be assigned.</errorMessage>
+        <filterItems>
+            <field>Technician__c.Active__c</field>
+            <operation>equals</operation>
+            <value>true</value>
+        </filterItems>
+        <isOptional>false</isOptional>
+    </lookupFilter>
+    <referenceTo>Technician__c</referenceTo>
+    <relationshipLabel>Service Requests</relationshipLabel>
+    <relationshipName>Service_Requests</relationshipName>
+    <required>false</required>
+    <trackTrending>false</trackTrending>
+    <type>Lookup</type>
+</CustomField>
