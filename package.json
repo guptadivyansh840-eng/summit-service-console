@@ -1,0 +1,20 @@
+{
+  "name": "summit-service-request-console",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Service Request Console (LWC + Apex) for Summit Facility Services",
+  "scripts": {
+    "lint": "eslint force-app/main/default/lwc",
+    "prettier": "prettier --write \"force-app/**/*.{cls,js,html,css,json}\"",
+    "prettier:verify": "prettier --check \"force-app/**/*.{cls,js,html,css,json}\""
+  },
+  "devDependencies": {
+    "@lwc/eslint-plugin-lwc": "^1.7.2",
+    "@prettier/plugin-xml": "^3.4.1",
+    "@salesforce/eslint-config-lwc": "^3.5.3",
+    "@salesforce/eslint-plugin-lightning": "^1.0.0",
+    "eslint": "^8.57.0",
+    "prettier": "^3.2.5",
+    "prettier-plugin-apex": "^2.1.0"
+  }
+}

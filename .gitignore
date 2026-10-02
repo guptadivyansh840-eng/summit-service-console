@@ -1,0 +1,8 @@
+node_modules/
+.sfdx/
+.sf/
+.localdevserver/
+.vscode/
+*.log
+coverage/
+test-results/
