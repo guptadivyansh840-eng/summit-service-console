@@ -1,0 +1,11 @@
+/* Layout helpers only. SLDS and base components do the styling. */
+.table-area {
+    min-height: 12rem;
+}
+
+.pager-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.25rem;
+}

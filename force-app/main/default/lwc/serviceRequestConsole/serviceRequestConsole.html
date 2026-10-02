@@ -1,0 +1,240 @@
+<template>
+    <lightning-card title="Service Request Console" icon-name="standard:service_report">
+        <!-- Search and filter controls -->
+        <div class="slds-p-horizontal_medium slds-p-bottom_small">
+            <div class="slds-grid slds-wrap slds-grid_vertical-align-end slds-gutters_small">
+                <div class="slds-col slds-size_1-of-1 slds-large-size_6-of-12 slds-m-bottom_x-small">
+                    <lightning-input
+                        type="search"
+                        label="Search service requests"
+                        variant="label-hidden"
+                        placeholder="Search by SR number, subject, property or technician…"
+                        value={searchInput}
+                        onchange={handleSearchChange}
+                    ></lightning-input>
+                </div>
+                <div class="slds-col slds-m-bottom_x-small">
+                    <button
+                        type="button"
+                        class="slds-button slds-button_neutral"
+                        aria-expanded={filtersExpanded}
+                        aria-controls="filter-panel"
+                        onclick={handleToggleFilters}
+                    >
+                        <lightning-icon
+                            icon-name={filtersIcon}
+                            size="xx-small"
+                            class="slds-m-right_x-small"
+                            alternative-text=""
+                        ></lightning-icon>
+                        {filtersLabel}
+                    </button>
+                    <lightning-button
+                        class="slds-m-left_x-small"
+                        label="Clear all"
+                        icon-name="utility:undo"
+                        onclick={handleClearAll}
+                    ></lightning-button>
+                </div>
+            </div>
+
+            <div id="filter-panel" class="slds-m-top_small">
+                <template lwc:if={filtersExpanded}>
+                    <div class="slds-grid slds-wrap slds-gutters_small">
+                        <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2 slds-large-size_1-of-4">
+                            <lightning-checkbox-group
+                                name="status"
+                                label="Status"
+                                options={statusOptions}
+                                value={statuses}
+                                onchange={handleStatusChange}
+                            ></lightning-checkbox-group>
+                        </div>
+                        <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2 slds-large-size_3-of-4">
+                            <div class="slds-grid slds-wrap slds-gutters_small">
+                                <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-3">
+                                    <lightning-combobox
+                                        name="priority"
+                                        label="Priority"
+                                        options={priorityOptions}
+                                        value={priority}
+                                        onchange={handlePriorityChange}
+                                    ></lightning-combobox>
+                                </div>
+                                <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-3">
+                                    <lightning-combobox
+                                        name="category"
+                                        label="Category"
+                                        options={categoryOptions}
+                                        value={category}
+                                        onchange={handleCategoryChange}
+                                    ></lightning-combobox>
+                                </div>
+                                <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-3 slds-p-top_large">
+                                    <lightning-input
+                                        type="toggle"
+                                        label="Overdue only"
+                                        checked={overdueOnly}
+                                        message-toggle-active="On"
+                                        message-toggle-inactive="Off"
+                                        onchange={handleOverdueChange}
+                                    ></lightning-input>
+                                </div>
+                                <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-3">
+                                    <lightning-input
+                                        type="date"
+                                        label="Requested from"
+                                        data-id="dateFrom"
+                                        value={dateFrom}
+                                        onchange={handleDateFromChange}
+                                    ></lightning-input>
+                                </div>
+                                <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-3">
+                                    <lightning-input
+                                        type="date"
+                                        label="Requested to"
+                                        data-id="dateTo"
+                                        value={dateTo}
+                                        onchange={handleDateToChange}
+                                    ></lightning-input>
+                                </div>
+                                <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-3"></div>
+                                <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-3">
+                                    <lightning-record-picker
+                                        label="Technician"
+                                        placeholder="Search technicians…"
+                                        object-api-name="Technician__c"
+                                        value={technicianId}
+                                        onchange={handleTechnicianChange}
+                                    ></lightning-record-picker>
+                                </div>
+                                <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-3">
+                                    <lightning-record-picker
+                                        label="Property"
+                                        placeholder="Search properties…"
+                                        object-api-name="Property__c"
+                                        value={propertyId}
+                                        onchange={handlePropertyChange}
+                                    ></lightning-record-picker>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </template>
+            </div>
+        </div>
+
+        <!-- Results -->
+        <div class="table-area slds-is-relative">
+            <lightning-spinner
+                lwc:if={showOverlaySpinner}
+                alternative-text="Loading service requests"
+                size="medium"
+            ></lightning-spinner>
+            <lightning-spinner
+                lwc:if={showInitialSpinner}
+                alternative-text="Loading service requests"
+                size="large"
+            ></lightning-spinner>
+
+            <template lwc:if={showError}>
+                <div class="slds-text-align_center slds-p-around_large" role="alert">
+                    <lightning-icon icon-name="utility:error" variant="error" alternative-text="Error"></lightning-icon>
+                    <p class="slds-text-heading_small slds-m-vertical_small">
+                        We could not load service requests.
+                    </p>
+                    <p class="slds-m-bottom_small">
+                        Something went wrong on our side. Please try again, or contact your administrator if
+                        it keeps happening.
+                    </p>
+                    <lightning-button variant="brand" label="Try again" onclick={handleRetry}></lightning-button>
+                </div>
+            </template>
+            <template lwc:elseif={showEmpty}>
+                <div class="slds-text-align_center slds-p-around_large">
+                    <template lwc:if={hasNoDataAtAll}>
+                        <p class="slds-text-heading_small">
+                            No service requests yet. New requests will appear here.
+                        </p>
+                    </template>
+                    <template lwc:else>
+                        <p class="slds-text-heading_small slds-m-bottom_small">
+                            No service requests match your search or filters.
+                        </p>
+                        <lightning-button
+                            variant="brand"
+                            label="Clear all filters"
+                            onclick={handleClearAll}
+                        ></lightning-button>
+                    </template>
+                </div>
+            </template>
+            <template lwc:elseif={showTable}>
+                <lightning-datatable
+                    key-field="id"
+                    data={rows}
+                    columns={columns}
+                    sorted-by={sortedBy}
+                    sorted-direction={sortedDirection}
+                    onsort={handleSort}
+                    hide-checkbox-column
+                    min-column-width="100"
+                ></lightning-datatable>
+            </template>
+        </div>
+
+        <!-- Pagination -->
+        <div slot="footer" class="slds-text-align_left">
+            <template lwc:if={isTruncated}>
+                <p class="slds-text-color_weak slds-m-bottom_x-small" role="status">{truncationMessage}</p>
+            </template>
+            <div class="slds-grid slds-wrap slds-grid_vertical-align-center slds-grid_align-spread">
+                <div class="slds-col slds-m-bottom_x-small">
+                    <lightning-combobox
+                        name="pageSize"
+                        label="Rows per page"
+                        variant="label-inline"
+                        options={pageSizeOptions}
+                        value={pageSizeValue}
+                        disabled={disablePageSize}
+                        onchange={handlePageSizeChange}
+                    ></lightning-combobox>
+                </div>
+                <div class="slds-col slds-m-bottom_x-small">
+                    <span aria-live="polite" role="status">{rangeLabel}</span>
+                </div>
+                <div class="slds-col slds-m-bottom_x-small">
+                    <div class="pager-buttons">
+                        <lightning-button
+                            label="First"
+                            icon-name="utility:jump_to_left"
+                            disabled={disableFirstPrevious}
+                            onclick={handleFirst}
+                        ></lightning-button>
+                        <lightning-button
+                            label="Previous"
+                            icon-name="utility:chevronleft"
+                            disabled={disableFirstPrevious}
+                            onclick={handlePrevious}
+                        ></lightning-button>
+                        <span class="slds-p-horizontal_small">{pageLabel}</span>
+                        <lightning-button
+                            label="Next"
+                            icon-name="utility:chevronright"
+                            icon-position="right"
+                            disabled={disableNext}
+                            onclick={handleNext}
+                        ></lightning-button>
+                        <lightning-button
+                            label="Last"
+                            icon-name="utility:jump_to_right"
+                            icon-position="right"
+                            disabled={disableLast}
+                            onclick={handleLast}
+                        ></lightning-button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </lightning-card>
+</template>
