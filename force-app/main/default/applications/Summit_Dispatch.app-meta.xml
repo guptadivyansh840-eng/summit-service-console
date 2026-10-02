@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomApplication xmlns="http://soap.sforce.com/2006/04/metadata">
+    <brand>
+        <headerColor>#0B5CAB</headerColor>
+        <shadeHeader>false</shadeHeader>
+    </brand>
+    <description>Dispatch console for Summit Facility Services</description>
+    <formFactors>Small</formFactors>
+    <formFactors>Large</formFactors>
+    <isNavAutoTempTabsDisabled>false</isNavAutoTempTabsDisabled>
+    <isNavPersonalizationDisabled>false</isNavPersonalizationDisabled>
+    <label>Summit Dispatch</label>
+    <navType>Standard</navType>
+    <tabs>Service_Request_Console</tabs>
+    <tabs>Service_Request__c</tabs>
+    <tabs>Property__c</tabs>
+    <tabs>Technician__c</tabs>
+    <uiType>Lightning</uiType>
+</CustomApplication>
