@@ -1,15 +1,4 @@
-/**
- * Backend for the Service Request Console LWC.
- *
- * Design notes
- *  - `with sharing` plus AccessLevel.USER_MODE: record sharing, object CRUD and field-level
- *    security are all enforced for the running user.
- *  - Paging is server-side (LIMIT / OFFSET). Only the requested page is returned, together
- *    with the total number of matching records.
- *  - All user input is bound (never concatenated into the query). Sort field, sort direction
- *    and page size come from allow-lists.
- *  - Estimated_Cost__c is only queried when the user can read it.
- */
+
 public with sharing class ServiceRequestConsoleController {
     public static final String GENERIC_ERROR_MESSAGE = 'We could not load service requests. Please try again, or contact your administrator if the problem continues.';
 
@@ -39,9 +28,7 @@ public with sharing class ServiceRequestConsoleController {
         'Estimated_Cost__c' => 'Estimated_Cost__c'
     };
 
-    // ------------------------------------------------------------------
-    // Transfer objects
-    // ------------------------------------------------------------------
+    
     public class Option {
         @AuraEnabled
         public String label;

@@ -315,14 +315,14 @@ private class ServiceRequestConsoleControllerTest {
         ServiceRequestConsoleController.QueryRequest r = req();
         r.sortField = 'Priority__c';
         r.sortDirection = 'asc';
-        ServiceRequestConsoleController.PageResult asc = run(r);
-        System.assertEquals('Critical', asc.records[0].priority);
-        System.assertEquals('Low', asc.records[5].priority);
+        ServiceRequestConsoleController.PageResult ascResult = run(r);
+        System.assertEquals('Critical', ascResult.records[0].priority);
+        System.assertEquals('Low', ascResult.records[5].priority);
 
         r.sortDirection = 'DESC';
-        ServiceRequestConsoleController.PageResult desc = run(r);
-        System.assertEquals('Low', desc.records[0].priority);
-        System.assertEquals('Critical', desc.records[5].priority);
+        ServiceRequestConsoleController.PageResult descResult = run(r);
+        System.assertEquals('Low', descResult.records[0].priority);
+        System.assertEquals('Critical', descResult.records[5].priority);
     }
 
     @IsTest
@@ -428,15 +428,15 @@ private class ServiceRequestConsoleControllerTest {
     // ------------------------------------------------------------------
     @IsTest
     static void paginationBoundariesAndPartialLastPage() {
-        Property__c bulk = TestDataFactory.createProperty(
+        Property__c bulkProp = TestDataFactory.createProperty(
             [SELECT Id FROM Account LIMIT 1].Id,
             'Bulk Property',
             true
         );
-        TestDataFactory.createServiceRequests(bulk.Id, 215, true);
+        TestDataFactory.createServiceRequests(bulkProp.Id, 215, true);
 
         ServiceRequestConsoleController.QueryRequest r = req();
-        r.propertyId = bulk.Id;
+        r.propertyId = bulkProp.Id;
         r.pageSize = 100;
 
         r.pageNumber = 1;
@@ -467,16 +467,16 @@ private class ServiceRequestConsoleControllerTest {
 
     @IsTest
     static void pagesDoNotOverlapAndKeepStableOrder() {
-        Property__c bulk = TestDataFactory.createProperty(
+        Property__c bulkProp = TestDataFactory.createProperty(
             [SELECT Id FROM Account LIMIT 1].Id,
             'Stable Order Property',
             true
         );
-        TestDataFactory.createServiceRequests(bulk.Id, 30, true);
+        TestDataFactory.createServiceRequests(bulkProp.Id, 30, true);
 
         Set<Id> seen = new Set<Id>();
         ServiceRequestConsoleController.QueryRequest r = req();
-        r.propertyId = bulk.Id;
+        r.propertyId = bulkProp.Id;
         r.pageSize = 10;
         r.sortField = 'Status__c'; // every row has the same status, so the tie-breaker decides
         r.sortDirection = 'ASC';
@@ -502,16 +502,16 @@ private class ServiceRequestConsoleControllerTest {
 
     @IsTest
     static void paginationStopsAtTheOffsetLimit() {
-        Property__c bulk = TestDataFactory.createProperty(
+        Property__c bulkProp = TestDataFactory.createProperty(
             [SELECT Id FROM Account LIMIT 1].Id,
             'Deep Property',
             true
         );
-        TestDataFactory.createServiceRequests(bulk.Id, 120, true);
+        TestDataFactory.createServiceRequests(bulkProp.Id, 120, true);
 
         ServiceRequestConsoleController.maxOffset = 20; // stands in for the real 2,000 limit
         ServiceRequestConsoleController.QueryRequest r = req();
-        r.propertyId = bulk.Id;
+        r.propertyId = bulkProp.Id;
         r.pageSize = 10;
         r.pageNumber = 3;
 
@@ -528,12 +528,12 @@ private class ServiceRequestConsoleControllerTest {
 
     @IsTest
     static void bulkScenarioWith250Records() {
-        Property__c bulk = TestDataFactory.createProperty(
+        Property__c bulkProp = TestDataFactory.createProperty(
             [SELECT Id FROM Account LIMIT 1].Id,
             'Big Property',
             true
         );
-        TestDataFactory.createServiceRequests(bulk.Id, 250, true);
+        TestDataFactory.createServiceRequests(bulkProp.Id, 250, true);
 
         Test.startTest();
         ServiceRequestConsoleController.QueryRequest r = req();
