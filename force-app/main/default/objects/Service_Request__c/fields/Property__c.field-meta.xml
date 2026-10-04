@@ -8,7 +8,7 @@
     <relationshipName>Service_Requests</relationshipName>
     <relationshipOrder>0</relationshipOrder>
     <reparentableMasterDetail>false</reparentableMasterDetail>
-    <writeRequiresMasterRead>false</writeRequiresMasterRead>
+    <writeRequiresMasterRead>true</writeRequiresMasterRead>
     <trackTrending>false</trackTrending>
     <type>MasterDetail</type>
 </CustomField>
