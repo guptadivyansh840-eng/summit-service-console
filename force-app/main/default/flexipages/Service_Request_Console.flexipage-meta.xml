@@ -7,7 +7,7 @@
                 <identifier>c_serviceRequestConsole</identifier>
             </componentInstance>
         </itemInstances>
-        <mode>Replace</mode>
+        
         <name>main</name>
         <type>Region</type>
     </flexiPageRegions>
