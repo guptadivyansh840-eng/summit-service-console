@@ -1,0 +1,184 @@
+<template>
+    <lightning-card icon-name="standard:case">
+
+        <h1 slot="title" class="slds-text-heading_small">Service Requests</h1>
+
+        <div slot="actions">
+            <lightning-button
+                variant="neutral"
+                label="Clear All"
+                icon-name="utility:refresh"
+                onclick={handleClearAll}>
+            </lightning-button>
+        </div>
+
+        <!-- Filters -->
+        <div class="slds-m-horizontal_medium slds-m-bottom_medium">
+            <div class="slds-box slds-theme_default">
+
+                <lightning-input
+                    type="search"
+                    label="Search Service Requests"
+                    placeholder="Search by SR number or subject"
+                    value={searchTerm}
+                    onchange={handleSearchChange}
+                    class="slds-m-bottom_medium">
+                </lightning-input>
+
+                <div class="slds-grid slds-wrap slds-gutters_small">
+
+                    <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-3">
+                        <lightning-combobox
+                            label="Priority"
+                            placeholder="All priorities"
+                            options={priorityOptions}
+                            value={selectedPriority}
+                            onchange={handlePriorityChange}>
+                        </lightning-combobox>
+                    </div>
+
+                    <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-3">
+                        <lightning-combobox
+                            label="Category"
+                            placeholder="All categories"
+                            options={categoryOptions}
+                            value={selectedCategory}
+                            onchange={handleCategoryChange}>
+                        </lightning-combobox>
+                    </div>
+
+                    <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-3">
+                        <lightning-record-picker
+                            label="Property"
+                            placeholder="Search property..."
+                            object-api-name="Property__c"
+                            value={selectedPropertyId}
+                            onchange={handlePropertyChange}>
+                        </lightning-record-picker>
+                    </div>
+
+                    <template if:false={isTechnician}>
+                        <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-3">
+                            <lightning-record-picker
+                                label="Technician"
+                                placeholder="Search technician..."
+                                object-api-name="Technician__c"
+                                value={selectedTechnicianId}
+                                onchange={handleTechnicianChange}>
+                            </lightning-record-picker>
+                        </div>
+                    </template>
+
+                    <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-3">
+                        <lightning-input
+                            type="date"
+                            label="Requested From"
+                            value={requestedDateFrom}
+                            onchange={handleDateFromChange}>
+                        </lightning-input>
+                    </div>
+
+                    <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-3">
+                        <lightning-input
+                            type="date"
+                            label="Requested To"
+                            value={requestedDateTo}
+                            onchange={handleDateToChange}>
+                        </lightning-input>
+                    </div>
+                </div>
+
+                <!-- Status + Overdue -->
+                <div class="slds-border_top slds-m-top_medium slds-p-top_medium">
+                    <div class="slds-grid slds-wrap slds-grid_vertical-align-end">
+
+                        <div class="slds-col slds-size_1-of-1 slds-large-size_9-of-12">
+                            <lightning-checkbox-group
+                                label="Status"
+                                field-level-help="Leave empty to show New, Scheduled, In Progress and On Hold."
+                                options={statusOptions}
+                                value={selectedStatuses}
+                                onchange={handleStatusChange}>
+                            </lightning-checkbox-group>
+                        </div>
+
+                        <div class="slds-col slds-size_1-of-1 slds-large-size_3-of-12 slds-m-top_small">
+                            <lightning-input
+                                type="toggle"
+                                label="Overdue Only"
+                                message-toggle-active="On"
+                                message-toggle-inactive="Off"
+                                checked={showOverdueOnly}
+                                onchange={handleOverdueChange}>
+                            </lightning-input>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+        <template if:false={isTechnician}>
+            <div class="slds-m-around_medium">
+                <lightning-record-picker
+                    label="Assign selected requests to technician"
+                    placeholder="Search active technicians..."
+                    object-api-name="Technician__c"
+                    value={assignmentTechnicianId}
+                    filter={activeTechnicianFilter}
+                    onchange={handleAssignmentTechnicianChange}>
+                </lightning-record-picker>
+            </div>
+        </template>
+        <template if:false={isTechnician}>
+            <div class="slds-m-around_medium">
+                <lightning-button
+                    label="Assign Technician"
+                    variant="brand"
+                    onclick={handleAssignClick}
+                    disabled={disableAssignButton}>
+                </lightning-button>
+            </div>
+        </template>
+
+        <!-- Results -->
+        <div class="slds-m-horizontal_medium">
+            <p class="slds-text-body_small slds-text-color_weak slds-m-bottom_x-small">
+                Total records: {totalRecords}
+            </p>
+
+            <div class="slds-box slds-p-around_none slds-scrollable_x">
+                <lightning-datatable
+                    key-field="Id"
+                    data={currentPageRecords}
+                    columns={columns}
+                    sorted-by="Requested_Date__c"
+                    sorted-direction={sortDirection}
+                    onsort={handleSort}
+                    onrowselection={handleRowSelection}>
+
+                </lightning-datatable>
+            </div>
+        </div>
+
+        <!-- Pagination -->
+        <div slot="footer" class="slds-grid slds-grid_align-center slds-grid_vertical-align-center">
+            <lightning-button
+                label="Previous"
+                icon-name="utility:chevronleft"
+                onclick={handlePrevious}
+                disabled={disablePrevious}>
+            </lightning-button>
+
+            <span class="slds-m-horizontal_medium slds-text-color_weak">{pageInfo}</span>
+
+            <lightning-button
+                label="Next"
+                icon-name="utility:chevronright"
+                icon-position="right"
+                onclick={handleNext}
+                disabled={disableNext}>
+            </lightning-button>
+        </div>
+
+    </lightning-card>
+</template>
