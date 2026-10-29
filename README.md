@@ -101,31 +101,3 @@ manifest/package.xml, config/project-scratch-def.json
 
 **Responsive.** The filter panel collapses by default at small widths and is toggled with an `aria-expanded` button showing "Filters (n)". The datatable scrolls horizontally on phones.
 
-## Assumptions (please confirm with Atul)
-
-1. **Account read access.** The Customer column needs `Account` read access, so the permission set grants Read on Account as well as the three custom objects.
-2. **Required fields in the permission set.** Salesforce does not allow required fields (`Subject__c`, `Requested_Date__c`, `Property__c`, `Customer__c`, `Name`) in a permission set, because they are always visible with the object. So only optional fields are listed. `Estimated_Cost__c` is left out on purpose.
-3. **Status filter with nothing selected** means "no status filter" (all statuses), not "show nothing".
-4. **Requested page beyond the range** returns **page 1**, consistent with FR-7.4.
-5. **Overdue** is computed by the formula exactly as specified in the brief (Scheduled Date before today and not Completed/Cancelled), so a "New" request with a past scheduled date also counts.
-6. **Record links** use `/lightning/r/Service_Request__c/<id>/view`, which works in Lightning Experience and the mobile app without any org-specific URL.
-7. **Tab icon.** The tabs use the `Custom70: Handsaw` icon. If your org rejects it at deploy time, replace the `<motif>` value in `force-app/main/default/tabs/*.tab-meta.xml` with any valid icon.
-8. **External sharing model.** Only the internal org-wide defaults are set in metadata (Property Private, Technician Public Read Only, Service Request Controlled by Parent).
-
-## Known limitations
-
-- **2,000-row OFFSET limit (FR-3.7).** SOQL `OFFSET` cannot exceed 2,000. The server computes `maxReachablePage` for the current page size (for example page 81 at 25 rows). Beyond that, Next is disabled, **Last is disabled**, and a message asks the user to narrow the search or filters. A page number past the limit falls back to page 1. A full solution is *keyset (cursor) paging*: sort by the chosen field plus `Name`, remember the last row's sort values, and query `WHERE (sortField, Name) > (:lastValue, :lastName)`. The trade-offs are that "jump to page N" and "Last" become hard, null handling is more complex, and every sortable field needs its own comparison logic.
-- Sorting by Status uses picklist order (as defined in Setup), not alphabetical.
-- Search is a plain `LIKE '%term%'` on four fields. That is fine for tens of thousands of rows, but beyond that it should move to SOSL or an indexed search field.
-- The permission set grants no create/edit rights because editing is out of scope.
-
-## Handover note
-
-**Done:** the data model (objects, fields, roll-up, three validation rules, layouts), permission set, Summit Dispatch app, tab and App Page; the Apex controller; the LWC with search, all filters, sorting, paging and loading/empty/error states; sample data scripts; and the Apex tests with a data factory.
-
-**Not done / still to do before delivery:**
-- Deploy to a real org and tick through the Section 9 checklist (the code was written without access to an org, so expect small fixes on first deploy).
-- Screenshots in `docs/screenshots/` and the 3 to 5 minute demo video.
-- Jest tests for the LWC and the other stretch goals (keyset paging, summary tiles, CSV export, saved view, inline edit, URL state, card layout, column chooser).
-
-**With more time:** keyset paging past 2,000 rows, summary tiles that apply a filter on click, and Jest tests for debounce and page-reset logic.
